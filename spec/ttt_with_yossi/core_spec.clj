@@ -36,7 +36,7 @@
           (should-throw Throwable "Square is occupied"
             (place-symbol [0 1 2 3 :O 5 6 7 8] 4 :X)))))
 
-(describe "grab positions"
+(describe "check for win"
 
           (defn grab-positions [board]
             (concat (partition-all 3 board)
@@ -50,7 +50,18 @@
 
   (it "creates a list of possible winning positions"
     (should= '((0 1 2) (3 4 5) (6 7 8) (0 3 6) (1 4 7) (2 5 8) (0 4 8) (2 4 6))
-     (grab-positions new-board))))
+     (grab-positions new-board)))
+
+  (describe "checks each set of positions for three in row"
+
+          (defn three-in-row [row]
+            (and (every? keyword? row) (every? #(= (first row) %) row)))
+
+          (defn win? [board]
+            (some true? (map #(three-in-row %) (grab-positions board))))
+
+    (it "returns true for match"
+      (should= true (win? [:X :X :X 3 4 5 6 7 8])))))
 
 
 (run-specs)
