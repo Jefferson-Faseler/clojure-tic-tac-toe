@@ -110,30 +110,40 @@
                 :O
                 :X))
 
+            (declare get-best-score play-each-empty-square)
+
+            (defn compare-scores
+              [results]
+              (if results
+                (apply max-key :score results)
+                "NOTHING HERE"))
+
             (defn negamax [board symbol index depth]
               (cond
                 (win? board) (compose-board-score (- 10 depth) index)
                 (full? board) (compose-board-score 0 index)
                 :else (compose-board-score
-                        (- (:score (negamax
-                                  (place-symbol board index symbol)
-                                  (opponent-symbol symbol)
-                                  (inc index)
-                                  (inc depth))))
+                        (- (:score (get-best-score
+                                   (place-symbol board index symbol)
+                                   (opponent-symbol symbol)
+                                   (inc depth))))
                         index)))
 
+            (defn play-each-empty-square [board symbol depth]
+              (if-not (empty? (filter-blank board))
+                (map #(negamax board symbol % depth) (filter-blank board))))
+
+            (defn get-best-score [board symbol depth]
+              (println (play-each-empty-square board symbol depth)))
 
   (describe "negamax"
-    (describe "returns placement score if board is complete"
-      (it "win/loss board"
-        (should= {:score 9 :index 6} (negamax [:X :O 2 :X :O 5 :X 7 :X] :O 6 1)))
+    (describe "returns placement score for instant win move"
+      (it "one move to win"
+        (should= {:score 9 :index 2} (get-best-score [:X :O 2 :X :O 5 6 7 :X] :X 0))))
 
-      (it "full board"
-        (should= {:score 0 :index 8} (negamax [:X :O :O :O :X :X :X :O :O] :X 8 3))))
-
-    (describe "if board is not complete"
-      (it "completes possible board scores based on index"
-        (should= {:score -3 :index 0} (negamax new-board :X 0 0))))
+    (describe "new board"
+      (it "returns index of the best move"
+        (should= {:score -3 :index 0} (get-best-score new-board :X 0))))
 
 
   ) ;; negamax
