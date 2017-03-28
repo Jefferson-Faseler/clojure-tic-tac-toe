@@ -100,7 +100,17 @@
   (it "finds the indexes of each empty square"
     (should= [2 5 6 7] (filter-blank [:X :O  2
                                       :X :O  5
-                                       6  7 :X]))))
+                                       6  7 :X])))
+
+            (defn placement-score [board index depth]
+              (cond
+                (win? board) {:score (- 10 depth) :index index}))
+
+  (it "returns a score and index for a move"
+    (should= {:score 9 :index 6}
+            (placement-score [:X :O  2
+                              :X :O  5
+                              :X  7 :X] 6 1))))
 
 
 
