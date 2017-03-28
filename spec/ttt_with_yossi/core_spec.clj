@@ -92,6 +92,16 @@
     (it "returns false if board is not full"
       (should= false (full? new-board)))))
 
+(describe "unbeatable AI"
+
+            (defn filter-blank [board]
+              (filter #(number? %) board))
+
+  (it "finds the indexes of each empty square"
+    (should= [2 5 6 7] (filter-blank [:X :O  2
+                                      :X :O  5
+                                       6  7 :X]))))
+
 
 
 (run-specs)
