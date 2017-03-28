@@ -119,8 +119,24 @@
                                                    :X :O :O] 8 3)))
 
   (it "returns nil if board is not won or full"
-    (should= nil (placement-score new-board 0 0))))
+    (should= nil (placement-score new-board 0 0)))
 
+            (defn negamax [board symbol index depth]
+              (if-let [placement-score (placement-score board index depth)]
+                placement-score))
+
+  (describe "negamax"
+    (describe "returns palcement score if board is complete"
+      (it "win/loss board"
+        (should= (placement-score [:X :O 2 :X :O 5 :X 7 :X] 6 1) (negamax [:X :O 2 :X :O 5 :X 7 :X] :O 6 1)))
+
+      (it "full board"
+        (should= (placement-score [:X :O :O :O :X :X :X :O :O] 8 3) (negamax [:X :O :O :O :X :X :X :O :O] :X 8 3)))))
+
+    (it "returns nil if board is not complete"
+      (should= (placement-score new-board 0 0) (negamax new-board :X 0 0)))
+
+  ) ;; negamax
 
 
 (run-specs)
