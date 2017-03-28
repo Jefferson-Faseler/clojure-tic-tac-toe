@@ -27,10 +27,14 @@
               (defn place-symbol [board square symbol]
                 (if (can-place? board square)
                   (assoc board square symbol)
-                  board))
+                  (throw (Exception. "Square is occupied"))))
 
         (it "should return the board for a valid placement"
-          (should= [0 1 2 3 :O 5 6 7 8] (place-symbol new-board 4 :O))))
+          (should= [0 1 2 3 :O 5 6 7 8] (place-symbol new-board 4 :O)))
+
+        (it "should throw exception that square is already occupied"
+          (should-throw Throwable "Square is occupied"
+            (place-symbol [0 1 2 3 :O 5 6 7 8] 4 :X))))
 
 (describe "grab positions"
 
