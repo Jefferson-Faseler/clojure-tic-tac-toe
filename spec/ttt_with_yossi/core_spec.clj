@@ -58,10 +58,12 @@
             (and (every? keyword? row) (every? #(= (first row) %) row)))
 
           (defn win? [board]
-            (some true? (map #(three-in-row %) (grab-positions board))))
+            (true? (some true? (map #(three-in-row %) (grab-positions board)))))
 
     (it "returns true for match"
-      (should= true (win? [:X :X :X 3 4 5 6 7 8])))))
+      (should= true (win? [:X :X :X 3 4 5 6 7 8])))
+    (it "returns false otherwise"
+      (should= false (win? new-board)))))
 
 
 (run-specs)
