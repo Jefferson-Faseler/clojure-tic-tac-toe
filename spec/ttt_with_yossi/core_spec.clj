@@ -102,42 +102,42 @@
                                       :X :O  5
                                        6  7 :X])))
 
-            (defn complete-board-score [board index depth]
-              (cond
-                (win? board) {:score (- 10 depth) :index index}
-                (full? board) {:score 0 :index index}))
+            (defn compose-board-score [score index]
+              {:score score :index index})
 
-  (it "returns a score based on depth and returns an index for won board"
-    (should= {:score 9 :index 6}
-            (complete-board-score [:X :O  2
-                                   :X :O  5
-                                   :X  7 :X] 6 1)))
-
-  (it "returns a score of 0 and index for draw game"
-    (should= {:score 0 :index 8} (complete-board-score [:X :O :O
-                                                        :O :X :X
-                                                        :X :O :O] 8 3)))
-
-  (it "returns nil if board is not won or full"
-    (should= nil (complete-board-score new-board 0 0)))
+            (defn opponent-symbol [symbol]
+              (if (= symbol :X)
+                :O
+                :X))
 
             (defn negamax [board symbol index depth]
-              (if-let [placement-score (complete-board-score board index depth)]
-                placement-score))
+              (cond
+                (win? board) (compose-board-score (- 10 depth) index)
+                (full? board) (compose-board-score 0 index)
+                :else (compose-board-score
+                        (- (:score (negamax
+                                  (place-symbol board index symbol)
+                                  (opponent-symbol symbol)
+                                  (inc index)
+                                  (inc depth))))
+                        index)))
+
 
   (describe "negamax"
-    (describe "returns palcement score if board is complete"
+    (describe "returns placement score if board is complete"
       (it "win/loss board"
-        (should= (complete-board-score [:X :O 2 :X :O 5 :X 7 :X] 6 1) (negamax [:X :O 2 :X :O 5 :X 7 :X] :O 6 1)))
+        (should= {:score 9 :index 6} (negamax [:X :O 2 :X :O 5 :X 7 :X] :O 6 1)))
 
       (it "full board"
-        (should= (complete-board-score [:X :O :O :O :X :X :X :O :O] 8 3) (negamax [:X :O :O :O :X :X :X :O :O] :X 8 3))))
+        (should= {:score 0 :index 8} (negamax [:X :O :O :O :X :X :X :O :O] :X 8 3))))
 
     (describe "if board is not complete"
-      (it "returns nil"
-        (should= (complete-board-score new-board 0 0) (negamax new-board :X 0 0)))))
+      (it "completes possible board scores based on index"
+        (should= {:score -3 :index 0} (negamax new-board :X 0 0))))
+
 
   ) ;; negamax
+  ) ;; unbeatable AI
 
 
 (run-specs)
