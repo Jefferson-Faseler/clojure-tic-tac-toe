@@ -34,7 +34,7 @@
 
         (it "should throw exception that square is already occupied"
           (should-throw Throwable "Square is occupied"
-            (place-symbol [0 1 2 3 :O 5 6 7 8] 4 :X))))
+            (place-symbol [0 1 2 3 :O 5 6 7 8] 4 :X)))))
 
 (describe "grab positions"
 
@@ -45,8 +45,12 @@
               (take-nth 3 (drop 1 board)) ;(1 4 7)
               (take-nth 3 (drop 2 board)) ;(2 5 8)
               (take-nth 4 board);(0 4 8)
-              (take 3 (take-nth 2 (drop 2 board)))))))
+              (take 3 (take-nth 2 (drop 2 board)) ;(2 4 6)
+              ))))
 
   (it "creates a list of possible winning positions"
     (should= '((0 1 2) (3 4 5) (6 7 8) (0 3 6) (1 4 7) (2 5 8) (0 4 8) (2 4 6))
      (grab-positions new-board))))
+
+
+(run-specs)
