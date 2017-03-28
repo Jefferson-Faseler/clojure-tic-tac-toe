@@ -61,9 +61,23 @@
             (true? (some true? (map #(three-in-row %) (grab-positions board)))))
 
     (it "returns true for match"
-      (should= true (win? [:X :X :X 3 4 5 6 7 8])))
+      (should= true (win? [:X :X :X
+                            3  4  5
+                            6  7  8]))
+      (should= true (win? [:X :O :O
+                           :X :O :O
+                           :X  7  8]))
+      (should= true (win? [:O :X :X
+                           :X :O :X
+                           :X :X :O]))
+      (should= true (win? [:O :O :X
+                           :O :X :O
+                           :X :O :O])))
     (it "returns false otherwise"
-      (should= false (win? new-board)))))
+      (should= false (win? new-board))
+      (should= false (win? [:X :O :X
+                            :X :X :O
+                             6 :O  8])))))
 
 
 (run-specs)
