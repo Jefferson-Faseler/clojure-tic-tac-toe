@@ -4,7 +4,7 @@
 
 (describe "Makes a board"
 
-          (def new-board (range 0 9))
+          (def new-board (into [] (take 9 (iterate inc 0))))
 
   (it "as a vector"
     (should= [0 1 2 3 4 5 6 7 8] new-board)))
@@ -18,10 +18,19 @@
 
   (describe "should check if the square is available"
     (it "returns true if the symbol can be played"
-      (should= true (can-place? [0 1 2 3 4 5 :X 7 8] 5)))
+      (should= true (can-place? new-board 5)))
     (it "returns false is the space is occupied"
       (should= false (can-place? [0 1 2 3 4 5 :X 7 8] 6))))
 
+      (describe "should place the mark if the square is available"
+
+              (defn place-symbol [board square symbol]
+                (if (can-place? board square)
+                  (assoc board square symbol)
+                  board))
+
+        (it "should return the board for a valid placement"
+          (should= [0 1 2 3 :O 5 6 7 8] (place-symbol new-board 4 :O))))
 
 (describe "grab positions"
 
