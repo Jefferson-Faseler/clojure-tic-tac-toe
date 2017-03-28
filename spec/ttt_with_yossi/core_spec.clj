@@ -77,7 +77,21 @@
       (should= false (win? new-board))
       (should= false (win? [:X :O :X
                             :X :X :O
-                             6 :O  8])))))
+                             6 :O  8]))))
+
+  (describe "checks for full board"
+
+            (defn full? [board]
+              (not (some number? board)))
+
+    (it "returns true if board is full with no winner"
+      (should= true (full? [:X :O :O
+                            :O :X :X
+                            :X :O :O])))
+
+    (it "returns false if board is not full"
+      (should= false (full? new-board)))))
+
 
 
 (run-specs)
