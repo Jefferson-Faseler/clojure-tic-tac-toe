@@ -116,7 +116,10 @@
   (it "returns a score of 0 and index for draw game"
     (should= {:score 0 :index 8} (placement-score [:X :O :O
                                                    :O :X :X
-                                                   :X :O :O] 8 3))))
+                                                   :X :O :O] 8 3)))
+
+  (it "returns nil if board is not won or full"
+    (should= nil (placement-score new-board 0 0))))
 
 
 
