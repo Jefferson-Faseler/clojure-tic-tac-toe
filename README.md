@@ -1,1 +1,1 @@
-# ttt-with-yossi
+# clojure-tic-tac-toe

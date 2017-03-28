@@ -1,6 +1,6 @@
-(ns ttt-with-yossi.core-spec
+(ns clojure-tic-tac-toe.core-spec
   (:require [speclj.core :refer :all]
-            [ttt-with-yossi.core :refer :all]))
+            [clojure-tic-tac-toe.core :refer :all]))
 
 (describe "Makes a board"
 

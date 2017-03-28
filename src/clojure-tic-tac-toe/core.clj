@@ -1,4 +1,4 @@
-(ns ttt-with-yossi.core)
+(ns clojure-tic-tac-toe.core)
 
 (defn -main
   [& args]
