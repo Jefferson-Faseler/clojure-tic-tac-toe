@@ -115,8 +115,7 @@
             (defn compare-scores
               [results]
               (if results
-                (apply max-key :score results)
-                "NOTHING HERE"))
+                (apply max-key :score results)))
 
             (defn negamax [board symbol index depth]
               (cond
@@ -134,7 +133,7 @@
                 (map #(negamax board symbol % depth) (filter-blank board))))
 
             (defn get-best-score [board symbol depth]
-              (println (play-each-empty-square board symbol depth)))
+              (play-each-empty-square board symbol depth))
 
   (describe "negamax"
     (describe "returns placement score for instant win move"
