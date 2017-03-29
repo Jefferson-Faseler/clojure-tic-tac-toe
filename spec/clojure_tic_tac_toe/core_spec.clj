@@ -4,8 +4,6 @@
 
 (describe "Makes a board"
 
-          (def new-board (into [] (take 9 (iterate inc 0))))
-
   (it "as a vector"
     (should= [0 1 2 3 4 5 6 7 8] new-board)))
 
@@ -13,8 +11,6 @@
 
 (describe "Places a symbol on the board"
 
-          (defn can-place? [board square]
-            (number? (get board square)))
 
   (describe "should check if the square is available"
     (it "returns true if the symbol can be played"
@@ -24,10 +20,6 @@
 
       (describe "should place the mark if the square is available"
 
-              (defn place-symbol [board square symbol]
-                (if (can-place? board square)
-                  (assoc board square symbol)
-                  (throw (Exception. "Square is occupied"))))
 
         (it "should return the board for a valid placement"
           (should= [0 1 2 3 :O 5 6 7 8] (place-symbol new-board 4 :O)))
@@ -38,51 +30,38 @@
 
 (describe "check for win"
 
-          (defn grab-positions [board]
-            (concat (partition-all 3 board)
-            (list
-              (take-nth 3 board) ; (0 3 6)
-              (take-nth 3 (drop 1 board)) ;(1 4 7)
-              (take-nth 3 (drop 2 board)) ;(2 5 8)
-              (take-nth 4 board);(0 4 8)
-              (take 3 (take-nth 2 (drop 2 board)) ;(2 4 6)
-              ))))
 
   (it "creates a list of possible winning positions"
     (should= '((0 1 2) (3 4 5) (6 7 8) (0 3 6) (1 4 7) (2 5 8) (0 4 8) (2 4 6))
      (grab-positions new-board)))
 
-  (describe "checks each set of positions for three in row"
-
-          (defn three-in-row [row]
-            (and (every? keyword? row) (every? #(= (first row) %) row)))
-
-          (defn win? [board]
-            (true? (some true? (map #(three-in-row %) (grab-positions board)))))
-
-    (it "returns true for match"
-      (should= true (win? [:X :X :X
-                            3  4  5
-                            6  7  8]))
-      (should= true (win? [:X :O :O
-                           :X :O :O
-                           :X  7  8]))
-      (should= true (win? [:O :X :X
-                           :X :O :X
-                           :X :X :O]))
-      (should= true (win? [:O :O :X
-                           :O :X :O
-                           :X :O :O])))
-    (it "returns false otherwise"
-      (should= false (win? new-board))
-      (should= false (win? [:X :O :X
-                            :X :X :O
-                             6 :O  8]))))
+  ; (describe "checks each set of positions for three in row"
+  ;
+  ;
+  ;   (it "returns true for match"
+  ;     (should= true (win? [:X :X :X
+  ;                           3  4  5
+  ;                           6  7  8] :X))
+  ;     (should= true (win? [:X :O :O
+  ;                          :X :O :O
+  ;                          :X  7  8] :X))
+  ;     (should= true (win? [:O :X :X
+  ;                          :X :O :X
+  ;                          :X :X :O] :O))
+  ;     (should= true (win? [:O :O :X
+  ;                          :O :X :O
+  ;                          :X :O :O] :X)))
+  ;   (it "returns false otherwise"
+  ;     (should= false (win? new-board :X))
+  ;     (should= false (win? [:O :O :X
+  ;                          :O :X :O
+  ;                          :X :O :O] :O))
+  ;     (should= false (win? [:X :O :X
+  ;                           :X :X :O
+  ;                            6 :O  8] :O))))
 
   (describe "checks for full board"
 
-            (defn full? [board]
-              (not (some number? board)))
 
     (it "returns true if board is full with no winner"
       (should= true (full? [:X :O :O
@@ -94,59 +73,35 @@
 
 (describe "unbeatable AI"
 
-            (defn filter-blank [board]
-              (filter #(number? %) board))
 
   (it "finds the indexes of each empty square"
     (should= [2 5 6 7] (filter-blank [:X :O  2
                                       :X :O  5
                                        6  7 :X])))
 
-            (defn compose-board-score [score index]
-              {:score score :index index})
 
-            (defn opponent-symbol [symbol]
-              (if (= symbol :X)
-                :O
-                :X))
-
-            (declare get-best-score play-each-empty-square)
-
-            (defn compare-scores
-              [results]
-              (if results
-                (apply max-key :score results)))
-
-            (defn negamax [board symbol index depth]
-              (cond
-                (win? board) (compose-board-score (- 10 depth) index)
-                (full? board) (compose-board-score 0 index)
-                :else (compose-board-score
-                        (- (:score (get-best-score
-                                   (place-symbol board index symbol)
-                                   (opponent-symbol symbol)
-                                   (inc depth))))
-                        index)))
-
-            (defn play-each-empty-square [board symbol depth]
-              (if-not (empty? (filter-blank board))
-                (map #(negamax board symbol % depth) (filter-blank board))))
-
-            (defn get-best-score [board symbol depth]
-              (play-each-empty-square board symbol depth))
 
   (describe "negamax"
     (describe "returns placement score for instant win move"
+
+      (it "wins with only one possible move"
+        (should= 4 (get-best-score [:X :O :X
+                                    :X  4 :O
+                                     6 :O :X] :O 0)))
+
       (it "one move to win"
-        (should= {:score 9 :index 2} (get-best-score [:X :O 2 :X :O 5 6 7 :X] :X 0))))
+        (should= 6 (get-best-score [:X :O  2
+                                    :X :O  5
+                                     6  7 :X] :X 0))))
 
     (describe "new board"
       (it "returns index of the best move"
-        (should= {:score -3 :index 0} (get-best-score new-board :X 0))))
+        (should= 2 (get-best-score new-board :X 0))))
 
 
   ) ;; negamax
   ) ;; unbeatable AI
+
 
 
 (run-specs)
