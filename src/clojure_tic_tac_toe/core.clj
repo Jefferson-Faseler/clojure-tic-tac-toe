@@ -1,7 +1,7 @@
 (ns clojure-tic-tac-toe.core)
 
 
-(declare three-in-row minimax assign-board-score)
+(declare three-in-row computer-play minimax assign-board-score get-best-score)
 
 
 (def new-board (into [] (take 9 (iterate inc 0))))
@@ -63,8 +63,12 @@
     (do (println "Make your move human...")
     (let [input (Integer. (read-line))]
       (if-let [new-board (place-symbol board input :X)]
-        (play-game new-board)
+        (computer-play new-board)
         (play-game board))))))
+
+
+(defn computer-play [board]
+  (play-game (place-symbol board (get-best-score board :O 0) :O)))
 
 
 (defn play-each-empty-square [board symbol depth]
