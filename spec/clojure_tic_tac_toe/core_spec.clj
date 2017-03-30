@@ -93,10 +93,7 @@
 
     (describe "new board"
       (it "returns index of the best move"
-        (should= 1 (get-best-score new-board :X 0)))
-
-      (it "should not return a very bad score"
-        (should-not-contain {:score -10000000000000} (play-each-empty-square new-board :X 0))))
+        (should= 1 (get-best-score new-board :X 0))))
 
 
   ) ;; negamax
