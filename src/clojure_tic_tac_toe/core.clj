@@ -48,6 +48,25 @@
   (not (some number? board)))
 
 
+(defn print-board [board]
+  (println (str (board 0) " | " (board 1) " | " (board 2)))
+  (println "----------")
+  (println (str (board 3) " | " (board 4) " | " (board 5)))
+  (println "----------")
+  (println (str (board 6) " | " (board 7) " | " (board 8))))
+
+
+(defn play-game [board]
+  (print-board board)
+  (if (or (win? board) (full? board))
+    (println "Game over!")
+    (do (println "Make your move human...")
+    (let [input (Integer. (read-line))]
+      (if-let [new-board (place-symbol board input :X)]
+        (play-game new-board)
+        (play-game board))))))
+
+
 (defn play-each-empty-square [board symbol depth]
     (flatten (map #(minimax board symbol % depth) (filter-blank board))))
 
@@ -79,6 +98,10 @@
 
 (defn get-best-score [board symbol depth]
   (compare-scores (play-each-empty-square board symbol depth)))
+
+
+
+(play-game new-board)
 
 
 (defn -main
