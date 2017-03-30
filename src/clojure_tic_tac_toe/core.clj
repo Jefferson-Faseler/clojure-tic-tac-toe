@@ -39,23 +39,31 @@
 
   (declare memo-empty-squares)
 
+  (defn compose-board-score [symbol index depth]
+    (if (= symbol :X)
+      {:score (- depth 10) :index index}
+      {:score (- 10 depth) :index index}))
+
   (defn compare-scores
     [results]
     (:index (apply max-key :score results)))
 
-  (defn negamax [board symbol index depth]
-    (let [new-board (place-symbol board index symbol)]
-      (cond
-        (win? new-board) {:score (- 10 depth) :index index}
-        (full? new-board) {:score 0 :index index}
-        :else (memo-empty-squares
-                  new-board
-                  (opponent-symbol symbol)
-                  (inc depth)))))
+  (defn minimax [board symbol index depth]
+      (let [new-board (place-symbol board index symbol)]
+        (cond
+          (win? new-board) (compose-board-score symbol index depth)
+          (full? new-board) {:score 0 :index index}
+          :else (memo-empty-squares
+                    new-board
+                    (opponent-symbol symbol)
+                    (inc depth)))))
 
 
   (defn play-each-empty-square [board symbol depth]
-    (flatten (map #(negamax board symbol % depth) (filter-blank board))))
+    (let [blanks (filter-blank board)]
+      (if-not (= (first blanks) nil)
+      (flatten (map #(minimax board symbol % depth) (filter-blank board)))
+      {:score -10000000000000})))
 
   (defn get-best-score [board symbol depth]
     (compare-scores (play-each-empty-square board symbol depth)))

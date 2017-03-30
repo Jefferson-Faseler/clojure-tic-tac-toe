@@ -35,30 +35,27 @@
     (should= '((0 1 2) (3 4 5) (6 7 8) (0 3 6) (1 4 7) (2 5 8) (0 4 8) (2 4 6))
      (grab-positions new-board)))
 
-  ; (describe "checks each set of positions for three in row"
-  ;
-  ;
-  ;   (it "returns true for match"
-  ;     (should= true (win? [:X :X :X
-  ;                           3  4  5
-  ;                           6  7  8] :X))
-  ;     (should= true (win? [:X :O :O
-  ;                          :X :O :O
-  ;                          :X  7  8] :X))
-  ;     (should= true (win? [:O :X :X
-  ;                          :X :O :X
-  ;                          :X :X :O] :O))
-  ;     (should= true (win? [:O :O :X
-  ;                          :O :X :O
-  ;                          :X :O :O] :X)))
-  ;   (it "returns false otherwise"
-  ;     (should= false (win? new-board :X))
-  ;     (should= false (win? [:O :O :X
-  ;                          :O :X :O
-  ;                          :X :O :O] :O))
-  ;     (should= false (win? [:X :O :X
-  ;                           :X :X :O
-  ;                            6 :O  8] :O))))
+  (describe "checks each set of positions for three in row"
+
+
+    (it "returns true for match"
+      (should= true (win? [:X :X :X
+                            3  4  5
+                            6  7  8]))
+      (should= true (win? [:X :O :O
+                           :X :O :O
+                           :X  7  8]))
+      (should= true (win? [:O :X :X
+                           :X :O :X
+                           :X :X :O]))
+      (should= true (win? [:O :O :X
+                           :O :X :O
+                           :X :O :O])))
+    (it "returns false otherwise"
+      (should= false (win? new-board))
+      (should= false (win? [:X :O :X
+                            :X :X :O
+                             6 :O  8]))))
 
   (describe "checks for full board"
 
@@ -89,14 +86,17 @@
                                     :X  4 :O
                                      6 :O :X] :O 0)))
 
-      (it "one move to win"
-        (should= 6 (get-best-score [:X :O  2
+      (it "one move to win and not block"
+        (should= 7 (get-best-score [:X :O  2
                                     :X :O  5
-                                     6  7 :X] :X 0))))
+                                     6  7 :X] :O 0))))
 
     (describe "new board"
       (it "returns index of the best move"
-        (should= 2 (get-best-score new-board :X 0))))
+        (should= 1 (get-best-score new-board :X 0)))
+
+      (it "should not return a very bad score"
+        (should-not-contain {:score -10000000000000} (play-each-empty-square new-board :X 0))))
 
 
   ) ;; negamax
