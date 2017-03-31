@@ -71,83 +71,41 @@
   (play-game (place-symbol board (get-best-score board :O) :O)))
 
 
-; (defn play-each-empty-square [board symbol depth]
-;     (if (nil? (first (filter-blank board)))
-;       (println "HERE"))
-;     (flatten (map #(minimax board symbol % depth) (filter-blank board))))
+  (defn assign-scores [score index]
+      {:score score :index index})
 
 
-; (defn find-thing [best acc]
-;   (loop [a best b (first acc)]
-;     (recur (if (< a b) a b) (rest acc))))
+(defn play-each-empty-square [board symbol depth]
+  (map #(assign-scores
+          (- (:score (minimax
+                        (assoc board % symbol)
+                        (opponent-symbol symbol)
+                        depth)))
+          %)
+        (filter-blank board)))
 
 
+(def memo-play-empty-squares (memoize play-each-empty-square))
 
-; (def memo-empty-squares (memoize play-each-empty-square))
 
 (defn compare-scores
   [results]
     (apply max-key :score (flatten results)))
 
-    ; (defn minimax [board symbol depth]
-    ;   (for [x (filter-blank board)]
-    ;     (let [new-board (assoc board x symbol)]
-    ;       (cond
-    ;         (win? new-board) (- 10 depth)
-    ;         (full? new-board) 0
-    ;         :else (- (first (minimax (assoc board x symbol)
-    ;                             (opponent-symbol symbol)
-    ;                             (inc depth))))))
 
+(defn minimax [board symbol depth]
+  (cond
+    (win? board) {:score (+ -10 depth)}
+    (full? board) {:score 0}
+    :else (compare-scores
+      (memo-play-empty-squares board symbol (inc depth)))))
 
-    (defn minimax [board symbol depth]
-          (cond
-            (win? board) {:score (+ -10 depth)}
-            (full? board) {:score 0}
-            :else (compare-scores (for [x (filter-blank board)]
-                      (let [tempboard (assoc board x symbol)]
-                      {:score (- (:score (minimax
-                      tempboard
-                      (opponent-symbol symbol)
-                      (inc depth)
-                      )))
-                      :index x})
-                      ))))
-                  ; (compare-scores (map #(* -1 (:score %)) (memo-empty-squares
-                  ;           new-board
-                  ;           (opponent-symbol symbol)
-                  ;           (inc depth)
-                  ;           )))
-                  ; ))
-
-
-; (defn minimize [board symbol index depth]
-;     (let [new-board (place-symbol board index symbol)]
-;       (cond
-;         (win? new-board) {:score (- depth 10) :index index}
-;         (full? new-board) {:score 0 :index index}
-;         :else (compare-scores (memo-empty-squares
-;                   new-board
-;                   (opponent-symbol symbol)
-;                   (inc depth)
-;                   true) false))))
-
-
-
-; (defn assign-board-score [symbol index depth]
-;   (if (= symbol :X)
-;     {:score (- depth 10) :index index}
-;     {:score (- 10 depth) :index index}))
-;
-;
-; (defn get-best-score [board symbol depth]
-;   (:index (compare-scores (play-each-empty-square board symbol depth true) true)))
 
 (defn get-best-score [board symbol]
   (:index (minimax board symbol 0)))
 
 
-(play-game new-board)
+; (play-game new-board)
 
 
 (defn -main
