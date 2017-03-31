@@ -1,7 +1,7 @@
 (ns clojure-tic-tac-toe.core)
 
 
-(declare three-in-row minimax assign-board-score)
+(declare three-in-row computer-play negamax compare-scores get-best-score)
 
 
 (def new-board (into [] (take 9 (iterate inc 0))))
@@ -21,9 +21,7 @@
 
 
 (defn opponent-symbol [symbol]
-  (if (= symbol :X)
-    :O
-    :X))
+  (if (= symbol :X) :O :X))
 
 
 (defn can-place? [board square]
@@ -63,45 +61,53 @@
     (do (println "Make your move human...")
     (let [input (Integer. (read-line))]
       (if-let [new-board (place-symbol board input :X)]
-        (play-game new-board)
+        (computer-play new-board)
         (play-game board))))))
 
 
+(defn computer-play [board]
+  (play-game (place-symbol board (get-best-score board :O) :O)))
+
+
+(defn assign-scores [score index]
+  {:score score :index index})
+
+
+(defn negatize [score]
+  (- (:score score)))
+
+
 (defn play-each-empty-square [board symbol depth]
-    (flatten (map #(minimax board symbol % depth) (filter-blank board))))
+  (map #(assign-scores
+          (negatize (negamax
+                        (assoc board % symbol)
+                        (opponent-symbol symbol)
+                        depth))
+          %)
+        (filter-blank board)))
 
 
-(def memo-empty-squares (memoize play-each-empty-square))
+(def memo-play-empty-squares (memoize play-each-empty-square))
 
 
-(defn minimax [board symbol index depth]
-    (let [new-board (place-symbol board index symbol)]
-      (cond
-        (win? new-board) (assign-board-score symbol index depth)
-        (full? new-board) {:score 0 :index index}
-        :else (memo-empty-squares
-                  new-board
-                  (opponent-symbol symbol)
-                  (inc depth)))))
-
-
-(defn assign-board-score [symbol index depth]
-  (if (= symbol :X)
-    {:score (- depth 10) :index index}
-    {:score (- 10 depth) :index index}))
+(defn negamax [board symbol depth]
+  (cond
+    (win? board) {:score (+ -10 depth)}
+    (full? board) {:score 0}
+    :else (compare-scores
+      (memo-play-empty-squares board symbol (inc depth)))))
 
 
 (defn compare-scores
   [results]
-  (:index (apply max-key :score results)))
+  (apply max-key :score (flatten results)))
 
 
-(defn get-best-score [board symbol depth]
-  (compare-scores (play-each-empty-square board symbol depth)))
+(defn get-best-score [board symbol]
+  (:index (negamax board symbol 0)))
 
 
-
-(play-game new-board)
+; (play-game new-board)
 
 
 (defn -main
