@@ -55,6 +55,13 @@
   (first (filter keyword? (check-positions board))))
 
 
+(defn game-over? [board]
+  (cond
+    (win? board) (get-winner board)
+    (full? board) "Cat's game"
+    :else false))
+
+
 (defn print-board [board]
   (println (str (board 0) " | " (board 1) " | " (board 2)))
   (println "----------")
@@ -65,8 +72,8 @@
 
 (defn play-game [board]
   (print-board board)
-  (if (or (win? board) (full? board))
-    (println "Game over!")
+  (if-let [game-over-message (game-over? board)]
+    (println (str game-over-message))
     (do (println "Make your move")
     (let [input (Integer. (read-line))]
       (if-let [new-board (place-symbol board input :X)]

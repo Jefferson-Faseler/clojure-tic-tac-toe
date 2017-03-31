@@ -113,13 +113,28 @@
   ) ;; unbeatable AI
 
 (describe "User interface"
-  (it "returns winning symbol if win"
-    (should= :X (get-winner [:X :X :X
-                              3  4  5
-                              6  7  8])))
+  (describe "Retrieving winning symbol"
+    (it "returns winning symbol if win"
+      (should= :X (get-winner [:X :X :X
+                                3  4  5
+                                6  7  8])))
 
-  (it "returns nil if no win"
-    (should= nil (get-winner new-board))))
+    (it "returns nil if no win"
+      (should= nil (get-winner new-board))))
+
+  (describe "Checks if the game is over"
+    (it "returns winning symbol if there is a winner"
+      (should= :O (game-over? [:O :X :X
+                               :X :O :X
+                               :X :X :O])))
+
+    (it "returns draw message if the board is full with no winner"
+      (should= "Cat's game" (game-over? [:X :O :O
+                                         :O :X :X
+                                         :X :O :O])))
+
+    (it "returns false if the game is not won or a draw"
+      (should= false (game-over? new-board)))))
 
 
 
