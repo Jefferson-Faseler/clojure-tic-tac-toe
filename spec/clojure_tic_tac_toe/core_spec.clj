@@ -113,10 +113,13 @@
   ) ;; unbeatable AI
 
 (describe "User interface"
-  (it "returns who won at win checks"
+  (it "returns winning symbol if win"
     (should= :X (get-winner [:X :X :X
                               3  4  5
-                              6  7  8]))))
+                              6  7  8])))
+
+  (it "returns nil if no win"
+    (should= nil (get-winner new-board))))
 
 
 
