@@ -112,4 +112,4 @@
 
 (defn -main
   [& args]
-  (println "Hello World"))
+  (println "Let's play Clojure Tac Toe"))
