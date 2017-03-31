@@ -7,13 +7,17 @@
 (def new-board (into [] (take 9 (iterate inc 0))))
 
 
-(defn grab-positions [board]
+(defn get-positions [board]
   (concat (partition-all 3 board) ; rows
   (concat (apply map vector (partition 3 board)) ; columns
   (list
     (take-nth 4 board); (0 4 8) diagonal
     (take 3 (take-nth 2 (drop 2 board)) ; (2 4 6) diagonal
     )))))
+
+
+(defn check-positions [board]
+  (map #(three-in-row %) (get-positions board)))
 
 
 (defn filter-blank [board]
@@ -35,15 +39,20 @@
 
 
 (defn win? [board]
-  (true? (some true? (map #(three-in-row % symbol) (grab-positions board)))))
+  (true? (some keyword? (check-positions board))))
 
 
-(defn three-in-row [row symbol]
-  (and (every? keyword? row) (every? #(= (first row) %) row)))
+(defn three-in-row [row]
+  (if (and (every? keyword? row) (every? #(= (first row) %) row))
+    (first row)))
 
 
 (defn full? [board]
   (not (some number? board)))
+
+
+(defn get-winner [board]
+  (first (filter keyword? (check-positions board))))
 
 
 (defn print-board [board]
@@ -58,7 +67,7 @@
   (print-board board)
   (if (or (win? board) (full? board))
     (println "Game over!")
-    (do (println "Make your move human...")
+    (do (println "Make your move")
     (let [input (Integer. (read-line))]
       (if-let [new-board (place-symbol board input :X)]
         (computer-play new-board)

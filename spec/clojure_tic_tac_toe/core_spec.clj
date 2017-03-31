@@ -33,7 +33,7 @@
 
   (it "creates a list of possible winning positions"
     (should= '((0 1 2) (3 4 5) (6 7 8) (0 3 6) (1 4 7) (2 5 8) (0 4 8) (2 4 6))
-     (grab-positions new-board)))
+     (get-positions new-board)))
 
   (describe "checks each set of positions for three in row"
 
@@ -111,6 +111,12 @@
 
 
   ) ;; unbeatable AI
+
+(describe "User interface"
+  (it "returns who won at win checks"
+    (should= :X (get-winner [:X :X :X
+                              3  4  5
+                              6  7  8]))))
 
 
 
