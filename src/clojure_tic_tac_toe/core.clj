@@ -1,7 +1,7 @@
 (ns clojure-tic-tac-toe.core)
 
 
-(declare three-in-row computer-play minimize maximize minimax assign-board-score get-best-score)
+(declare three-in-row computer-play negamax compare-scores get-best-score)
 
 
 (def new-board (into [] (take 9 (iterate inc 0))))
@@ -21,9 +21,7 @@
 
 
 (defn opponent-symbol [symbol]
-  (if (= symbol :X)
-    :O
-    :X))
+  (if (= symbol :X) :O :X))
 
 
 (defn can-place? [board square]
@@ -71,16 +69,20 @@
   (play-game (place-symbol board (get-best-score board :O) :O)))
 
 
-  (defn assign-scores [score index]
-      {:score score :index index})
+(defn assign-scores [score index]
+  {:score score :index index})
+
+
+(defn negatize [score]
+  (- (:score score)))
 
 
 (defn play-each-empty-square [board symbol depth]
   (map #(assign-scores
-          (- (:score (minimax
+          (negatize (negamax
                         (assoc board % symbol)
                         (opponent-symbol symbol)
-                        depth)))
+                        depth))
           %)
         (filter-blank board)))
 
@@ -88,12 +90,7 @@
 (def memo-play-empty-squares (memoize play-each-empty-square))
 
 
-(defn compare-scores
-  [results]
-    (apply max-key :score (flatten results)))
-
-
-(defn minimax [board symbol depth]
+(defn negamax [board symbol depth]
   (cond
     (win? board) {:score (+ -10 depth)}
     (full? board) {:score 0}
@@ -101,8 +98,13 @@
       (memo-play-empty-squares board symbol (inc depth)))))
 
 
+(defn compare-scores
+  [results]
+  (apply max-key :score (flatten results)))
+
+
 (defn get-best-score [board symbol]
-  (:index (minimax board symbol 0)))
+  (:index (negamax board symbol 0)))
 
 
 ; (play-game new-board)
