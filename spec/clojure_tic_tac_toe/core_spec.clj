@@ -8,7 +8,6 @@
     (should= [0 1 2 3 4 5 6 7 8] new-board)))
 
 
-
 (describe "Places a symbol on the board"
 
 
@@ -25,7 +24,7 @@
           (should= [0 1 2 3 "O" 5 6 7 8] (place-symbol new-board 4 "O")))
 
         (it "should throw exception that square is already occupied"
-          (should= nil (place-symbol [0  1  2
+          (should-be-nil (place-symbol [0  1  2
                                       3 "O" 5
                                       6  7  8] 4 "X")))))
 
@@ -104,14 +103,8 @@
       (it "draw when it has to"
         (should= 1 (get-best-score ["X"  1 "O"
                                     "O" "O" "X"
-                                    "X" "X" "O"] "X")))))
+                                    "X" "X" "O"] "X"))))))
 
-    ; (describe "new board"
-    ;   (it "returns index of the best move"
-    ;     (should= 8 (get-best-score new-board "X"))))
-
-
-  ) ;; unbeatable AI
 
 (describe "User interface"
   (describe "User input"
@@ -120,17 +113,17 @@
         (should= 5 (check-input "5")))
 
       (it "returns logical false if the input is not a number"
-        (should= nil (check-input "world")))
+        (should-be-nil (check-input "world")))
 
       (it "returns logical false if the input is a number, but out of range"
-        (should= nil (check-input "101"))))
+        (should-be-nil (check-input "101"))))
 
     (describe "gets the user input and runs it through checks"
       (it "returns a number if it meets all checks"
         (should= 7 (with-in-str "7" (get-input))))
 
       (it "returns logical false if it does not meet all checks"
-        (should= nil (with-in-str "hello world" (get-input))))))
+        (should-be-nil (with-in-str "hello world" (get-input))))))
 
   (describe "Retrieving winning symbol"
     (it "returns winning symbol if win"
@@ -139,7 +132,7 @@
                                  6   7   8])))
 
     (it "returns nil if no win"
-      (should= nil (get-winner new-board))))
+      (should-be-nil (get-winner new-board))))
 
   (describe "Checks if the game is over"
     (it "returns winning symbol if there is a winner"

@@ -87,17 +87,19 @@
 (def check-for-number (partial re-matches #"([0-9])"))
 
 (defn check-input [input]
-  (if (check-for-number input)
-    (if (valid-range? (Integer. input))
-      (Integer. input))))
+    (if (check-for-number input)
+        (if (valid-range? (Integer. input))
+            (Integer. input))))
 
 (defn get-input []
-  (if-let [input (check-input (read-line))]
-    input))
+    (if-let [input (check-input (read-line))]
+        input))
 
 
 (defn computer-play [board]
-    (play-game (place-symbol board (get-best-score board "O") "O") true))
+    (if (every? number? board)
+      (play-game (place-symbol board (rand-int 8) "O") true)
+      (play-game (place-symbol board (get-best-score board "O") "O") true)))
 
 
 (defn filter-blank [board]
