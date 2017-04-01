@@ -20,7 +20,7 @@
 
 
 (defn opponent-symbol [symbol]
-    (if (= symbol :X) :O :X))
+    (if (= symbol "X") "O" "X"))
 
 
 (defn can-place? [board square]
@@ -34,11 +34,11 @@
 
 
 (defn win? [board]
-    (true? (some keyword? (check-positions board))))
+    (true? (some string? (check-positions board))))
 
 
 (defn three-in-row [row]
-    (if (and (every? keyword? row) (every? #(= (first row) %) row))
+    (if (and (every? string? row) (every? #(= (first row) %) row))
         (first row)))
 
 
@@ -47,7 +47,7 @@
 
 
 (defn get-winner [board]
-    (first (filter keyword? (check-positions board))))
+    (first (filter string? (check-positions board))))
 
 
 (defn game-over? [board]
@@ -77,13 +77,13 @@
 
 (defn take-turn [board]
     (let [input (Integer. (read-line))]
-        (if-let [temp-board (place-symbol board input :X)]
+        (if-let [temp-board (place-symbol board input "X")]
             (play-game temp-board false)
             (play-game board true))))
 
 
 (defn computer-play [board]
-    (play-game (place-symbol board (get-best-score board :O) :O) true))
+    (play-game (place-symbol board (get-best-score board "O") "O") true))
 
 
 (defn filter-blank [board]
@@ -128,7 +128,7 @@
     (:index (negamax board symbol 0)))
 
 
-(play-game new-board true)
+; (play-game new-board true)
 
 
 (defn -main
