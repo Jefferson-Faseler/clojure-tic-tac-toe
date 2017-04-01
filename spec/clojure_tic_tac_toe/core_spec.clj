@@ -119,7 +119,13 @@
       (should= "3" (with-in-str "3" (check-input))))
 
     (it "returns nil for bad input"
-      (should= nil (with-in-str "hello" (check-input)))))
+      (should= nil (with-in-str "hello" (check-input))))
+
+    (it "checks if user input is within the range of the board"
+      (should= true (valid-range? 3)))
+
+    (it "returns false for a number out of range"
+      (should= false (valid-range? 99))))
 
   (describe "Retrieving winning symbol"
     (it "returns winning symbol if win"

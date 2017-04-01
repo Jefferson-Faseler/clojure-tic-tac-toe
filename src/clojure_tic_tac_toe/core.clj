@@ -82,8 +82,11 @@
             (play-game board true))))
 
 
+(def valid-range? (and (partial <= 0) (partial >= 9)))
+
+
 (defn check-input []
-  (if-let [input (re-matches #"([0-9]+)" (read-line))]
+  (if-let [input (re-matches #"([0-9])" (read-line))]
     (first input)))
 
 
