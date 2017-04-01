@@ -30,7 +30,7 @@
 (defn place-symbol [board square symbol]
   (if (can-place? board square)
     (assoc board square symbol)
-    (throw (Exception. "Square is occupied"))))
+    (println "Square is occupied")))
 
 
 (defn win? [board]
@@ -52,7 +52,7 @@
 
 (defn game-over? [board]
   (cond
-    (win? board) (get-winner board)
+    (win? board) (str (get-winner board) " wins")
     (full? board) "Cat's game"
     :else false))
 
@@ -65,23 +65,25 @@
   (println (str (board 6) " | " (board 7) " | " (board 8))))
 
 
-(defn play-game [board]
+(defn play-game [board human-player?]
   (print-board board)
   (if-let [game-over-message (game-over? board)]
     (println (str game-over-message))
-    (println "Make your move"))
-  (take-turn board))
+    (do (println "Make your move")
+        (if human-player?
+          (take-turn board)
+          (computer-play board)))))
 
 
 (defn take-turn [board]
   (let [input (Integer. (read-line))]
     (if-let [temp-board (place-symbol board input :X)]
-      (computer-play temp-board)
-      (play-game board))))
+      (play-game temp-board false)
+      (play-game board true))))
 
 
 (defn computer-play [board]
-  (play-game (place-symbol board (get-best-score board :O) :O)))
+  (play-game (place-symbol board (get-best-score board :O) :O) true))
 
 
 (defn filter-blank [board]
@@ -126,9 +128,9 @@
   (:index (negamax board symbol 0)))
 
 
-; (play-game new-board)
+(play-game new-board true)
 
 
 (defn -main
   [& args]
-  (println "Let's play Clojure Tac Toe"))
+  (println "Goodbye"))
