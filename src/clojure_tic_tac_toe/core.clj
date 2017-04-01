@@ -1,7 +1,6 @@
 (ns clojure-tic-tac-toe.core)
 
-
-(declare three-in-row computer-play negamax compare-scores get-best-score)
+(declare three-in-row take-turn computer-play negamax compare-scores get-best-score)
 
 
 (def new-board (into [] (take 9 (iterate inc 0))))
@@ -18,10 +17,6 @@
 
 (defn check-positions [board]
   (map #(three-in-row %) (get-positions board)))
-
-
-(defn filter-blank [board]
-  (filter #(number? %) board))
 
 
 (defn opponent-symbol [symbol]
@@ -74,15 +69,23 @@
   (print-board board)
   (if-let [game-over-message (game-over? board)]
     (println (str game-over-message))
-    (do (println "Make your move")
-    (let [input (Integer. (read-line))]
-      (if-let [new-board (place-symbol board input :X)]
-        (computer-play new-board)
-        (play-game board))))))
+    (println "Make your move"))
+  (take-turn board))
+
+
+(defn take-turn [board]
+  (let [input (Integer. (read-line))]
+    (if-let [temp-board (place-symbol board input :X)]
+      (computer-play temp-board)
+      (play-game board))))
 
 
 (defn computer-play [board]
   (play-game (place-symbol board (get-best-score board :O) :O)))
+
+
+(defn filter-blank [board]
+  (filter number? board))
 
 
 (defn assign-scores [score index]
