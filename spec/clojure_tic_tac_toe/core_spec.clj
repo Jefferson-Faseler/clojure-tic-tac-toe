@@ -115,17 +115,22 @@
 
 (describe "User interface"
   (describe "User input"
-    (it "checks if the user input a number"
-      (should= "3" (with-in-str "3" (check-input))))
+    (describe "checks if input is a number and is within range"
+      (it "returns the input if a number within range"
+        (should= 5 (check-input "5")))
 
-    (it "returns nil for bad input"
-      (should= nil (with-in-str "hello" (check-input))))
+      (it "returns logical false if the input is not a number"
+        (should= nil (check-input "world")))
 
-    (it "checks if user input is within the range of the board"
-      (should= true (valid-range? 3)))
+      (it "returns logical false if the input is a number, but out of range"
+        (should= nil (check-input "101"))))
 
-    (it "returns false for a number out of range"
-      (should= false (valid-range? 99))))
+    (describe "gets the user input and runs it through checks"
+      (it "returns a number if it meets all checks"
+        (should= 7 (with-in-str "7" (get-input))))
+
+      (it "returns logical false if it does not meet all checks"
+        (should= nil (with-in-str "hello world" (get-input))))))
 
   (describe "Retrieving winning symbol"
     (it "returns winning symbol if win"

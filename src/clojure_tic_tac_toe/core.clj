@@ -84,10 +84,16 @@
 
 (def valid-range? (and (partial <= 0) (partial >= 9)))
 
+(def check-for-number (partial re-matches #"([0-9])"))
 
-(defn check-input []
-  (if-let [input (re-matches #"([0-9])" (read-line))]
-    (first input)))
+(defn check-input [input]
+  (if (check-for-number input)
+    (if (valid-range? (Integer. input))
+      (Integer. input))))
+
+(defn get-input []
+  (if-let [input (check-input (read-line))]
+    input))
 
 
 (defn computer-play [board]
