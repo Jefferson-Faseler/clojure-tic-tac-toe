@@ -82,6 +82,11 @@
             (play-game board true))))
 
 
+(defn check-input []
+  (if-let [input (re-matches #"([0-9]+)" (read-line))]
+    (first input)))
+
+
 (defn computer-play [board]
     (play-game (place-symbol board (get-best-score board "O") "O") true))
 
@@ -104,8 +109,8 @@
                         (assoc board % symbol)
                         (opponent-symbol symbol)
                         depth))
-          %)
-          (filter-blank board)))
+            %)
+            (filter-blank board)))
 
 
 (def memo-play-empty-squares (memoize play-each-empty-square))

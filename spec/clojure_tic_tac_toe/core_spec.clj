@@ -114,6 +114,13 @@
   ) ;; unbeatable AI
 
 (describe "User interface"
+  (describe "User input"
+    (it "checks if the user input a number"
+      (should= "3" (with-in-str "3" (check-input))))
+
+    (it "returns nil for bad input"
+      (should= nil (with-in-str "hello" (check-input)))))
+
   (describe "Retrieving winning symbol"
     (it "returns winning symbol if win"
       (should= "X" (get-winner ["X" "X" "X"
